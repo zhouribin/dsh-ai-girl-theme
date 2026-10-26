@@ -2,7 +2,7 @@
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 换一套「AI 拟人」外观：**对话区背景跟着模型变**，整个界面换成像素字体，每张 provider 卡片里还能单独挑一张图。
 
-![Claude 娘](wallpapers/gijinka/claude.webp)
+![效果预览：对话区右侧竖版立绘 + 全局像素字体](docs/preview.webp)
 
 ## 不想研究？直接把下面这段丢给你的 DSH
 
@@ -41,6 +41,7 @@ git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 
 - **一个模型一张背景**：Claude 娘、GPT 龙娘、Gemini 娘、GLM 娘、Qwen 娘、Kimi 娘、Grok 娘、混元娘、文心娘、MiniMax 娘、Mistral 娘、Llama 娘、Seed 娘、RWKV 娘、DeepSeek 娘…… 没匹配到就用内置极光。
 - **全局像素字体**：界面、对话、代码块、终端统一一套字体栈；系统里没装的字体名会被跳过，回落默认外观，不会把界面弄坏。
+  > 字体文件**不在包里**（授权和体积原因），用的是系统已安装的像素字体——上面截图里的中文像素字来自 `brew install --cask font-zpix`。没装字体时界面保持官方外观。
 - **每张 provider 卡片可单独选图**：登录账号这种没有卡片的 provider 单独列在底部。选择会记住，优先级高于规则。
 - **自带素材、可离线**：图片由插件自己的路由从 `~/.dsh/themes/images` 提供，不联网、不改 DSH 安装目录。
 

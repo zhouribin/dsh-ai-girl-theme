@@ -2,7 +2,7 @@
 
 An "AI gijinka" theme pack for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): the conversation backdrop follows the model you are talking to, the whole interface switches to a pixel typeface, and every provider gets its own picture picker in *Settings → Models*.
 
-![Claude 娘](wallpapers/gijinka/claude.webp)
+![Preview: portrait backdrop in the conversation and the pixel typeface](docs/preview.webp)
 
 ## Don't want to read this? Paste one prompt into your DSH
 
@@ -41,6 +41,7 @@ Or from a terminal: `dsh plugin --profile <profile> add '<the spec above>'`, the
 
 - **One backdrop per model**: Claude 娘, GPT 龙娘, Gemini 娘, GLM 娘, Qwen 娘, Kimi 娘, Grok 娘, Hunyuan 娘, Wenxin 娘, MiniMax 娘, Mistral 娘, Llama 娘, Seed 娘, RWKV 娘, DeepSeek 娘 — matched by provider or model id, with a generated aurora fallback.
 - **Pixel typeface everywhere**: interface, conversation, code blocks and terminal share one font stack; a face that is not installed is skipped, so the shipped look returns instead of breaking.
+  > The font file is **not bundled** (licence and size), so the pack uses a pixel font already installed on the system — the pixel Chinese in the screenshot comes from `brew install --cask font-zpix`. Without one, the interface keeps its shipped typeface.
 - **Per-provider picker**: one row in every provider card, plus a footer row for providers without a card (the signed-in account). Choices persist and outrank the rules.
 - **Self-contained and offline**: pictures are served by the plugin from `~/.dsh/themes/images`; nothing inside the DSH installation is modified.
 

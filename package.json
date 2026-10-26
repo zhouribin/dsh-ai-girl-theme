@@ -30,6 +30,7 @@
     "locale/*.json",
     "icon.svg",
     "wallpapers/**/*.webp",
+    "docs/preview.webp",
     "README.md",
     "README.zh.md",
     "LICENSE",
