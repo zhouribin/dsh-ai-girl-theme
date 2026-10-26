@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Wallpaper">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0b1230"/>
+      <stop offset="0.55" stop-color="#153a6b"/>
+      <stop offset="1" stop-color="#1f6f8b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="tile">
+      <rect x="3" y="3" width="58" height="58" rx="13" ry="13"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect x="3" y="3" width="58" height="58" fill="url(#sky)"/>
+    <ellipse cx="46" cy="16" rx="16" ry="12" fill="url(#glow)"/>
+    <circle cx="45" cy="16" r="5" fill="#e2f5ff"/>
+    <path d="M3 46c9-6 18-6 26 0s17 6 32 0v15H3z" fill="#082033" opacity="0.85"/>
+    <path d="M3 52c11-5 19-4 26 1s16 4 32-1v10H3z" fill="#04121f"/>
+    <path d="M24 44c6-4 12-4 17 0 3 3 2 8-3 9-5 1-12-1-14-4-1-2-1-4 0-5z" fill="#5eead4" opacity="0.9"/>
+    <path d="M41 43c5-2 9 1 8 5-1 3-5 4-8 2z" fill="#5eead4" opacity="0.75"/>
+    <rect x="3" y="3" width="58" height="58" rx="13" ry="13" fill="none" stroke="#ffffff" stroke-opacity="0.16"/>
+  </g>
+</svg>
