@@ -1,5 +1,9 @@
 # AI Girl Theme · dsh-ai-girl-theme
 
+> **中文读者看这里 → [README.zh.md](README.zh.md)**（中文说明，含一键安装提示词）
+>
+> English is on this page; the Chinese version lives in the link above.
+
 An "AI gijinka" theme pack for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): the conversation backdrop follows the model you are talking to, the whole interface switches to a pixel typeface, and every provider gets its own picture picker in *Settings → Models*.
 
 ![Preview: full window, dark palette, portrait backdrop in the conversation, pixel typeface](docs/preview.webp)
