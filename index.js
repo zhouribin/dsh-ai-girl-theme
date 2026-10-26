@@ -691,6 +691,20 @@ export function apply(ctx, config) {
     } catch (error) {
       ctx.logger?.warn?.(error);
     }
+    let current;
+    try {
+      const defaults = ctx.get('agentDefaultModel') ?? ctx.agentDefaultModel;
+      if (defaults !== undefined && typeof defaults.currentSelection === 'function') {
+        const selection = defaults.currentSelection();
+        if (selection !== null && typeof selection === 'object'
+          && typeof selection.provider === 'string' && selection.provider !== ''
+          && typeof selection.model === 'string' && selection.model !== '') {
+          current = { provider: selection.provider, model: selection.model };
+        }
+      }
+    } catch (error) {
+      ctx.logger?.warn?.(error);
+    }
     table.push({ kind: 'style', text });
     table.push({
       kind: 'global',
@@ -698,6 +712,7 @@ export function apply(ctx, config) {
       value: {
         route: ROUTE,
         ...(providers === undefined ? {} : { providers }),
+        ...(current === undefined ? {} : { current }),
         prefs,
         veilLight: options.veilLight,
         veilDark: options.veilDark,

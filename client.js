@@ -106,7 +106,7 @@ window.__ModuleLoader__.load({
       body.dataset[PROVIDER_ATTR] = provider;
       body.dataset[MODEL_ATTR] = nextModel;
       try {
-        window.sessionStorage.setItem(STORE_KEY, JSON.stringify({ provider, model: nextModel }));
+        window.localStorage.setItem(STORE_KEY, JSON.stringify({ provider, model: nextModel }));
       } catch {
         /* storage can be unavailable; the live attribute is enough */
       }
@@ -115,13 +115,21 @@ window.__ModuleLoader__.load({
     /** Recover the last pair before the composer has rendered (reload / active turn). */
     function restoreCurrent() {
       if (typeof window === 'undefined') return;
+      let restored = false;
       try {
-        const saved = JSON.parse(window.sessionStorage.getItem(STORE_KEY) ?? 'null');
+        const saved = JSON.parse(window.localStorage.getItem(STORE_KEY) ?? 'null');
         if (saved !== null && typeof saved === 'object' && typeof saved.provider === 'string' && saved.provider !== '') {
           setCurrent(saved.provider, saved.model);
+          restored = true;
         }
       } catch {
         /* ignore malformed or unavailable storage */
+      }
+      if (restored) return;
+      const boot = bootstrap();
+      const current = boot !== undefined && boot.current !== null && typeof boot.current === 'object' ? boot.current : undefined;
+      if (current !== undefined && typeof current.provider === 'string' && current.provider !== '') {
+        setCurrent(current.provider, current.model);
       }
     }
 
