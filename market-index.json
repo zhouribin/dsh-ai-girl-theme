@@ -1,0 +1,53 @@
+{
+  "format": 1,
+  "title": {
+    "en": "AI Girl Theme",
+    "zh": "AI 娘化主题"
+  },
+  "description": {
+    "en": "Community DSH theme packs.",
+    "zh": "社区 DSH 主题包索引。"
+  },
+  "plugins": [
+    {
+      "name": "dsh-ai-girl-theme",
+      "title": {
+        "en": "AI Girl Theme",
+        "zh": "AI 娘化主题"
+      },
+      "description": {
+        "en": "Per-model gijinka wallpapers, a bundled pixel typeface, and a per-provider picker in Settings → Models.",
+        "zh": "对话区按模型换 AI 拟人立绘、自带像素字体，并在「设置 → 模型」里给每个 provider 单独选背景。"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IldhbGxwYXBlciI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InNreSIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwYjEyMzAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIwLjU1IiBzdG9wLWNvbG9yPSIjMTUzYTZiIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFmNmY4YiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0iZ2xvdyIgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNTAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjN2RkM2ZjIiBzdG9wLW9wYWNpdHk9IjAuOSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3ZGQzZmMiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9yYWRpYWxHcmFkaWVudD4KICAgIDxjbGlwUGF0aCBpZD0idGlsZSI+CiAgICAgIDxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSI1OCIgaGVpZ2h0PSI1OCIgcng9IjEzIiByeT0iMTMiLz4KICAgIDwvY2xpcFBhdGg+CiAgPC9kZWZzPgogIDxnIGNsaXAtcGF0aD0idXJsKCN0aWxlKSI+CiAgICA8cmVjdCB4PSIzIiB5PSIzIiB3aWR0aD0iNTgiIGhlaWdodD0iNTgiIGZpbGw9InVybCgjc2t5KSIvPgogICAgPGVsbGlwc2UgY3g9IjQ2IiBjeT0iMTYiIHJ4PSIxNiIgcnk9IjEyIiBmaWxsPSJ1cmwoI2dsb3cpIi8+CiAgICA8Y2lyY2xlIGN4PSI0NSIgY3k9IjE2IiByPSI1IiBmaWxsPSIjZTJmNWZmIi8+CiAgICA8cGF0aCBkPSJNMyA0NmM5LTYgMTgtNiAyNiAwczE3IDYgMzIgMHYxNUgzeiIgZmlsbD0iIzA4MjAzMyIgb3BhY2l0eT0iMC44NSIvPgogICAgPHBhdGggZD0iTTMgNTJjMTEtNSAxOS00IDI2IDFzMTYgNCAzMi0xdjEwSDN6IiBmaWxsPSIjMDQxMjFmIi8+CiAgICA8cGF0aCBkPSJNMjQgNDRjNi00IDEyLTQgMTcgMCAzIDMgMiA4LTMgOS01IDEtMTItMS0xNC00LTEtMi0xLTQgMC01eiIgZmlsbD0iIzVlZWFkNCIgb3BhY2l0eT0iMC45Ii8+CiAgICA8cGF0aCBkPSJNNDEgNDNjNS0yIDkgMSA4IDUtMSAzLTUgNC04IDJ6IiBmaWxsPSIjNWVlYWQ0IiBvcGFjaXR5PSIwLjc1Ii8+CiAgICA8cmVjdCB4PSIzIiB5PSIzIiB3aWR0aD0iNTgiIGhlaWdodD0iNTgiIHJ4PSIxMyIgcnk9IjEzIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS1vcGFjaXR5PSIwLjE2Ii8+CiAgPC9nPgo8L3N2Zz4K",
+      "author": "zhouribin",
+      "homepage": "https://github.com/zhouribin/dsh-ai-girl-theme",
+      "repository": {
+        "url": "https://github.com/zhouribin/dsh-ai-girl-theme"
+      },
+      "metadata": {
+        "keywords": [
+          "theme",
+          "wallpaper",
+          "pixel-font",
+          "gijinka",
+          "anime"
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.2.0",
+          "publishTimestamp": 1793004000,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/zhouribin/dsh-ai-girl-theme",
+            "commit": "4600ff50a5b64261e05c4d06a62194256c9c6e4d"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        }
+      ]
+    }
+  ]
+}
