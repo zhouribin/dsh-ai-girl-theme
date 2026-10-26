@@ -36,6 +36,18 @@
       },
       "versions": [
         {
+          "version": "1.2.1",
+          "publishTimestamp": 1793032890,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/zhouribin/dsh-ai-girl-theme",
+            "commit": "a6853744e5c176871ddf45ef23889d1c6671f63d"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        },
+        {
           "version": "1.2.0",
           "publishTimestamp": 1793004000,
           "source": {
