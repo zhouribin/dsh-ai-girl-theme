@@ -13,30 +13,34 @@
 复制整段，粘贴到你正在用的 DSH 对话框里，它自己会装：
 
 ```text
-请帮我把「AI 娘化主题」装到当前这个 DSH profile 上，只需要装，不用改配置。
+请把「AI 娘化主题」装到当前 DSH profile，只安装，不要改其它配置。
 
-安装地址（固定版本，不要替我改成分支名）：
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
+安装地址（固定版本，不要换成分支名）：
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1
 
 步骤：
-1. 用 plugin_manager 的 install_bundle，target 直接用上面这串地址。如果返回 already-installed，就跳过安装、不要重复装。
-   如果 install_bundle 不接受这种 git 地址，改用命令行：dsh plugin --profile <当前 profile> add '<上面那串>'，然后把包名加进该 profile 的 dsh.profile.bundles。
-2. 看返回里的 application：applied 才算成功；有 warnings 就原样念给我听。
-3. 用 cordis_inspect_query（platform=host、provider=Config、method=listConfigs、name=dsh-ai-girl-theme）确认出现 include 开头的 entry 行。
-4. 这个插件带客户端模块，必须重启 App 才生效：装完提醒我退出重开，然后刷新页面。
-5. 不要改 DSH 安装目录，不要动 ~/.dsh/themes 里已有的图片和 prefs.json，不要改我其它插件的配置。
+1. 如果当前 DSH 有插件安装入口，用上面的地址安装；否则在终端执行：
+   dsh plugin --profile <当前 profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1'
+   DSH Desktop 的 profile 通常是 desktop；`dsh --profile desktop --dump-config` 会被 Electron 壳拒绝，但 `plugin add` 可用。
+   同版本已装就跳过，不要重复安装。
+2. 确认：
+   - `dsh plugin --profile <profile> list` 显示 dsh-ai-girl-theme@1.2.1；
+   - profile 的 package.json 里 dsh.profile.bundles 含 dsh-ai-girl-theme；
+   - 运行中的 GUI 源上 GET /ai-girl-theme/index 返回图片 JSON 列表。
+3. 这个包带客户端模块：必须完全退出并重开 App（Desktop 从托盘退出，关窗口不算），再刷新页面。
+4. 不要动 DSH 安装目录、~/.dsh/themes 下的图片和 prefs.json，也不要改其它插件配置。
 
 装好后的效果：对话区按模型换二次元立绘、全局像素字体、设置 → 模型里每个 provider 多一行「对话背景」。
 ```
 
-装完**重启一次 App**（客户端模块只在启动时扫描），之后换图改配置只需要刷新页面。
+装完**完全退出并重开 App**（Desktop 要从托盘退出，关窗口不算；客户端模块只在启动时扫描），之后换图改配置只需要刷新页面。
 
 ## 手动安装（不想用 AI 的话）
 
 侧栏 **「插件」→ 安装**，粘贴：
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1
 ```
 
 或者终端：`dsh plugin --profile <profile> add '<上面那串>'`，然后重启 App。
@@ -108,10 +112,11 @@ macOS 上装完系统字体要重启 App 才会被页面识别。
 
 | 依赖的约定 | 用途 |
 | --- | --- |
-| 模型选择器标签上的 `data-provider-id` / `data-model-id`，配合 `:has(button[aria-haspopup="menu"] …)` | 按当前模型铺背景，且只在输入框触发器上生效（打开模型菜单时背景不动） |
+| `sessions.binding(sessionId).session.projections.faceOf('modelSelection')` | 从会话的持久化投影读当前 provider/model——和输入框模型选择器读的是同一个源，所以 composer 卸载后背景仍在 |
+| `body[data-ai-girl-provider]` / `body[data-ai-girl-model]` | 宿主样式表实际绘制的稳定锚点；客户端把投影镜像到这两个属性上 |
 | `--dsw-alias-bg-base`、`data-ds-dark-theme`、`data-ds-theme-source` | 让主区和对话列透出背景，浅色/深色各一套 |
 | `--dsw-font-family`、`--ds-font-family-code`、`--dsw-font-mono` | 像素字体 |
-| `webserver/index-inject` | 注入样式表和全局变量 `__DSH_AI_GIRL_THEME__` |
+| `webserver/index-inject` | 注入样式表、`current`（宿主默认选择）和全局变量 `__DSH_AI_GIRL_THEME__` |
 | `webServer.register('/ai-girl-theme')` | `/index`（图片列表）、`/prefs`（保存的选择）、`/<file>`（图片） |
 | `settings.models.provider-card`、`settings.models.footer` | 选择器所在的两处插槽 |
 
@@ -124,11 +129,12 @@ macOS 上装完系统字体要重启 App 才会被页面识别。
 
 | 现象 | 原因 |
 | --- | --- |
-| 装了但没任何变化 | App 没重启，客户端模块没加载。退出重开。 |
+| 装了但没任何变化 | App 没重启，客户端模块没加载。完全退出重开（Desktop 托盘 → 退出）。 |
+| 字体生效但背景图不显示 | v1.2.0 把背景锚在 composer 的模型按钮上；生成中或重启进入运行中的会话时按钮不在 DOM。v1.2.1 改为读会话的 `modelSelection` 投影，升级即可。 |
 | 设置里没有「对话背景」 | 插件在「插件」页被禁用了，或这个 profile 里没有 `@deepseek-ai/dsh-client-ui-settings-models`。 |
 | 某个模型没有背景 | 那个 provider 没命中规则；界面里选一张，或补一条 `rules`。没命中时是极光背景。 |
 | 图片发白 / 太暗 | 调 `scrimDark`（主开关）和 `veilDark`。 |
-| 字体不是像素字 | 没装像素字体，或装完没重启 App。 |
+| 字体不是像素字 | 自带字体没加载；确认 `/ai-girl-theme/fonts/fusion-pixel-12px-proportional-zh_hans.woff2` 返回 200，再重启。 |
 | 客户端更新后全失效 | 见「工作原理」表，改 `index.js` / `client.js` 里对应的名字。 |
 
 </details>
@@ -191,9 +197,11 @@ wallpapers/gijinka/ 21 张竖版立绘（第三方作品，见 LICENSE-ART.md）
 
 ### 环境与兼容性
 
-- DeepSeek Harness **0.2.x** 的 Web / Desktop profile（base 系 profile 自带插件管理器）。
+- DeepSeek Harness **0.2.x** 的 Web / Desktop profile。安装不假设一定有内置插件管理工具：`dsh plugin --profile <profile> add '<spec>'` 是受支持的兜底路径。
+- DSH Desktop：`plugin add` 对 `desktop` profile 可用；`dsh --profile desktop --dump-config` 会被 Electron 壳拒绝（这是预期行为，不是安装失败）。
 - 不需要 npm 账号、token 或 registry：安装地址是 Git URL。
 - 桌面端走 nightly，更新频繁；插件不阻塞客户端更新。
+- v1.2.1 从会话的 `modelSelection` 投影读当前模型，composer 卸载后背景仍在；v1.2.0 读 composer DOM，生成中可能丢背景。
 - 依赖的内部命名见「工作原理」，官方改名后功能静默失效、不影响本体。
 
 </details>

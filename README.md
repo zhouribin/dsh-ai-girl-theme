@@ -15,28 +15,33 @@ Copy the whole block into the chat of the DSH you are running — it installs th
 ```text
 Please install the "AI Girl Theme" into the current DSH profile. Install only — do not change any other configuration.
 
-Install spec (pinned version, do not replace it with a branch name):
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
+Install spec (pinned version; do not replace it with a branch name):
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1
 
 Steps:
-1. Call plugin_manager with action=install_bundle and target=<the spec above>. If it answers already-installed, skip the install instead of duplicating it.
-   If install_bundle rejects a git spec, fall back to `dsh plugin --profile <current profile> add '<the spec>'` and add the package name to that profile's dsh.profile.bundles.
-2. Read the returned `application` field: only "applied" is success. Read any `warnings` back to me verbatim.
-3. Confirm the row with cordis_inspect_query (platform=host, provider=Config, method=listConfigs, name=dsh-ai-girl-theme) — an entry id starting with "include" must appear.
-4. The bundle ships a client module, so it only takes effect after the app restarts: remind me to quit and reopen, then refresh the page.
-5. Do not touch the DSH installation, the pictures or prefs.json under ~/.dsh/themes, or any other plugin's configuration.
+1. If this DSH build exposes a plugin installer, use it with the spec above.
+   Otherwise run from a terminal:
+   dsh plugin --profile <current profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1'
+   On DSH Desktop the profile is usually `desktop`; `dsh --profile desktop --dump-config` is refused by the Electron shell, but `plugin add` works.
+   If the same version is already installed, do not install it again.
+2. Verify:
+   - `dsh plugin --profile <profile> list` shows `dsh-ai-girl-theme@1.2.1`;
+   - the profile's `package.json` lists `dsh-ai-girl-theme` in `dsh.profile.bundles`;
+   - `GET /ai-girl-theme/index` on the running GUI origin returns the image JSON list.
+3. The bundle ships a client module: fully quit and reopen the app (on Desktop, quit from the tray — closing the window is not enough), then refresh the page.
+4. Do not touch the DSH installation, the pictures or `prefs.json` under `~/.dsh/themes`, or any other plugin's configuration.
 
-Expected result: a per-model anime backdrop in the conversation, a pixel typeface everywhere, and a "Conversation wallpaper" row in Settings → Models for every provider.
+Expected: a per-model anime backdrop in conversations, the bundled pixel typeface, and a "Conversation wallpaper" row in Settings → Models for every provider.
 ```
 
-Then **restart the app once** (the client half is scanned at boot); after that, changing pictures or configuration only needs a page refresh.
+Then **fully quit and reopen the app** (on Desktop, quit from the tray; closing the window is not enough — the client half is scanned at boot). After that, changing pictures or configuration only needs a page refresh.
 
 ## Manual install
 
 Sidebar **Plugins → Install**, paste:
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.1
 ```
 
 Or from a terminal: `dsh plugin --profile <profile> add '<the spec above>'`, then restart the app.
@@ -108,10 +113,11 @@ Everything is one `<style>` row on the page bootstrap plus one read-only route �
 
 | Hook | Used for |
 | --- | --- |
-| `data-provider-id` / `data-model-id` on the composer's model label, scoped with `:has(button[aria-haspopup="menu"] …)` | Painting the backdrop for the selected model without reacting to the open model menu |
+| `sessions.binding(sessionId).session.projections.faceOf('modelSelection')` | Reading the current provider/model from the session's durable projection — the same source the composer's model seat uses, so the backdrop survives the composer being unmounted |
+| `body[data-ai-girl-provider]` / `body[data-ai-girl-model]` | The stable anchor the host stylesheet paints from; the client mirrors the projection onto it |
 | `--dsw-alias-bg-base`, `data-ds-dark-theme`, `data-ds-theme-source` | Making the frame and conversation column translucent, with separate light/dark values |
 | `--dsw-font-family`, `--ds-font-family-code`, `--dsw-font-mono` | The pixel typeface |
-| `webserver/index-inject` | The stylesheet and the picker's global (`__DSH_AI_GIRL_THEME__`) |
+| `webserver/index-inject` | The stylesheet, `current` (the host default selection) and the picker's global (`__DSH_AI_GIRL_THEME__`) |
 | `webServer.register('/ai-girl-theme')` | `/index` (picture list), `/prefs` (saved choices), `/<file>` (pictures) |
 | `settings.models.provider-card`, `settings.models.footer` | The picker rows |
 
@@ -124,11 +130,12 @@ The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/V
 
 | Symptom | Likely cause |
 | --- | --- |
-| Installed but nothing changed | The app was not restarted, so the client module never loaded. Quit and reopen. |
+| Installed but nothing changed | The app was not restarted, so the client module never loaded. Full quit and reopen (Desktop: tray → Quit). |
+| Font works but the wallpaper never appears | v1.2.0 anchored the backdrop on the composer's model button; while a turn is generating (or after restarting into a running session) that button is not in the DOM. v1.2.1 reads the session's `modelSelection` projection instead. Upgrade. |
 | Picker rows missing | The plugin is disabled in *Plugins*, or `@deepseek-ai/dsh-client-ui-settings-models` is not in this profile. |
 | Picture missing for one model | That provider has no rule; pick one in the UI or add a `rules` entry. Unmatched models fall back to the aurora. |
 | Picture washed out / too dark | Tune `scrimDark` (main knob) and `veilDark`. |
-| Font is not pixel | No pixel font installed, or the app was not restarted after installing one. |
+| Font is not pixel | The bundled face failed to load; check that `/ai-girl-theme/fonts/fusion-pixel-12px-proportional-zh_hans.woff2` returns 200, then restart. |
 | Everything broke after an app update | See the table above; rename the corresponding identifiers in `index.js` / `client.js`. |
 
 </details>
@@ -191,9 +198,11 @@ Artwork source: [genderswapai.com · AI gijinka gallery](https://genderswapai.co
 
 ### Requirements and compatibility
 
-- DeepSeek Harness **0.2.x** Web / Desktop profile (base-backed profiles ship the plugin manager).
+- DeepSeek Harness **0.2.x** Web / Desktop profile. The install path does not assume a built-in plugin-manager tool: `dsh plugin --profile <profile> add '<spec>'` is the supported fallback.
+- DSH Desktop: `plugin add` works for the `desktop` profile; `dsh --profile desktop --dump-config` is refused by the Electron shell (expected, not a failure).
 - No npm account, token or registry access: the install spec is a Git URL.
 - The Desktop app is on the nightly channel and updates often; the plugin never blocks an app update.
+- v1.2.1 reads the current model from the session's `modelSelection` projection, so the backdrop survives the composer being unmounted. v1.2.0 read the composer DOM and can lose the backdrop during a turn.
 - The internal names it relies on are listed above; if one is renamed, the feature stops silently and the app is unaffected.
 
 </details>
