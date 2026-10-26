@@ -1,5 +1,8 @@
 # 美术素材授权 / Artwork attribution
 
+> `LICENSE` 是**纯 MIT**，只覆盖插件源码。字体在 `fonts/OFL.txt`（SIL OFL 1.1）；本文件覆盖 `wallpapers/` 下的全部图片。
+
+
 本仓库的**代码**是 MIT（见 `LICENSE`）。`wallpapers/gijinka/` 下的**图片不是**，它们是第三方作品：
 
 - 出处：[genderswapai.com · AI 娘化形象图库](https://genderswapai.com/zh-CN/ai-gijinka/gallery)
