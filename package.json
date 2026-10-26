@@ -1,6 +1,6 @@
 {
   "name": "dsh-ai-girl-theme",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "AI girl theme for DeepSeek Harness: per-model gijinka wallpapers, a bundled pixel typeface, and a per-provider picker in the model settings.",
   "license": "MIT",
   "type": "module",
