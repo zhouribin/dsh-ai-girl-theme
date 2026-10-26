@@ -2,7 +2,7 @@
 
 An "AI gijinka" theme pack for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): the conversation backdrop follows the model you are talking to, the whole interface switches to a pixel typeface, and every provider gets its own picture picker in *Settings → Models*.
 
-![Claude 娘](wallpapers/gijinka/claude-wallpaper.webp)
+![Claude 娘](wallpapers/gijinka/claude.webp)
 
 中文说明见 [README.zh.md](README.zh.md)。
 
@@ -27,18 +27,18 @@ An "AI gijinka" theme pack for [DeepSeek Harness](https://github.com/deepseek-ai
 Paste this into **Plugins → Install** in the sidebar:
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.0.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 ```
 
 or from a terminal:
 
 ```sh
-dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.0.0'
+dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0'
 ```
 
 Then **restart the app once** — the client half of a plugin is scanned at boot. After that, configuration and picture changes only need a page refresh.
 
-Pin a tag or a commit (`#v1.0.0`, `#8624a36…`); a bare branch name would follow whatever is pushed next.
+Pin a tag or a commit (`#v1.1.0`, `#8624a36…`); a bare branch name would follow whatever is pushed next.
 
 ## What you get after installing
 
@@ -64,7 +64,7 @@ Everything is one `<style>` row on the page bootstrap plus one read-only route �
 | `webServer.register('/ai-girl-theme')` | `GET /index` (picture list), `GET\|POST /prefs` (saved choices), `GET /<file>` (pictures) |
 | `settings.models.provider-card`, `settings.models.footer` | The picker rows |
 
-The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/VP8X), so the fade distance adapts to landscape and portrait artwork alike.
+The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/VP8X), so the fade distance follows each picture's own width.
 
 ## Customise
 
@@ -88,9 +88,9 @@ The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/V
     font: true           # false keeps the shipped typeface
     families: ['Zpix']   # extra families tried before the built-in stack
     rules:
-      - { provider: 'anthropic*', image: gijinka/claude-wallpaper.webp }
-      - { model: 'my-local-model*', image: gijinka/qwen-wallpaper.webp }
-      - { provider: 'openai*', model: 'o4*', image: gijinka/gpt-wallpaper.webp, scrimDark: 0.5 }
+      - { provider: 'anthropic*', image: gijinka/claude.webp }
+      - { model: 'my-local-model*', image: gijinka/qwen.webp }
+      - { provider: 'openai*', model: 'o4*', image: gijinka/gpt.webp, scrimDark: 0.5 }
 ```
 
 Rules are evaluated in order and the last match wins. A provider or model ending in `*` matches as a prefix; `provider` and `model` may be used together.
@@ -129,7 +129,7 @@ index.js             Host half: seeding, picture route, stylesheet, bootstrap gl
 client.js            Client half: picker rows, live apply, saved state
 cordis.patch.yml     Default provider/model → picture rules
 locale/{en,zh}.json  Bundle title and description for the Plugins list
-wallpapers/gijinka/  31 pictures (third-party artwork — see LICENSE-ART.md)
+wallpapers/gijinka/  21 portrait pictures (third-party artwork — see LICENSE-ART.md)
 ```
 
 ## License

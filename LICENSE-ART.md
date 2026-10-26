@@ -19,34 +19,24 @@
 | 文件 | 角色 | 作者 |
 | --- | --- | --- |
 | `wallpapers/gijinka/claude.webp` | Claude 娘 | ZipZipPipe |
-| `wallpapers/gijinka/claude-wallpaper.webp` | Claude 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/deepseek.webp` | DeepSeek 娘（上善无形 原角色 · 二创） | ZipZipPipe |
-| `wallpapers/gijinka/deepseek-wallpaper.webp` | DeepSeek 娘 · 壁纸（上善无形 原角色 · 二创） | ZipZipPipe |
 | `wallpapers/gijinka/deepseek-v4flash.webp` | DeepSeek · 小肥鱼 V4F（上善无形 原角色 · 二创） | ZipZipPipe |
 | `wallpapers/gijinka/deepseek-harness.webp` | DeepSeek Harness | ZipZipPipe |
 | `wallpapers/gijinka/gpt.webp` | GPT 娘 | ZipZipPipe |
-| `wallpapers/gijinka/gpt-wallpaper.webp` | GPT 龙娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/gpt-image2.webp` | GPT Image 2 黑龙娘 | ZipZipPipe |
 | `wallpapers/gijinka/gpt-astra.webp` | GPT Astra 娘 | ZipZipPipe |
 | `wallpapers/gijinka/gemini.webp` | Gemini 娘 | ZipZipPipe |
 | `wallpapers/gijinka/glm.webp` | GLM 娘 | ZipZipPipe |
-| `wallpapers/gijinka/glm-wallpaper.webp` | GLM 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/qwen.webp` | Qwen 娘 | ZipZipPipe |
-| `wallpapers/gijinka/qwen-wallpaper.webp` | Qwen 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/kimi.webp` | Kimi 娘 | ZipZipPipe |
-| `wallpapers/gijinka/kimi-wallpaper.webp` | Kimi 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/grok.webp` | Grok 娘 | ZipZipPipe |
-| `wallpapers/gijinka/grok-wallpaper.webp` | Grok 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/llama.webp` | Llama 娘 | ZipZipPipe |
 | `wallpapers/gijinka/mistral.webp` | Mistral 娘 | ZipZipPipe |
 | `wallpapers/gijinka/minimax.webp` | MiniMax 娘 | ZipZipPipe |
 | `wallpapers/gijinka/hunyuan.webp` | 混元娘 | ZipZipPipe |
 | `wallpapers/gijinka/wenxin.webp` | 文心娘 | ZipZipPipe |
-| `wallpapers/gijinka/wenxin-wallpaper.webp` | 文心娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/seed.webp` | Seed 娘 | ZipZipPipe |
-| `wallpapers/gijinka/seed-wallpaper.webp` | Seed 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/rwkv.webp` | RWKV 娘 | ZipZipPipe |
-| `wallpapers/gijinka/rwkv-wallpaper.webp` | RWKV 娘 · 壁纸 | ZipZipPipe |
 | `wallpapers/gijinka/perplexity.webp` | Perplexity 娘 | ZipZipPipe |
 | `wallpapers/gijinka/jev.webp` | JEV 娘 | ZipZipPipe |
 

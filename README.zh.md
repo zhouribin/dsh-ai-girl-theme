@@ -2,7 +2,7 @@
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 换一套「AI 拟人」外观：**对话区背景跟着模型变**，整个界面换成像素字体，每张 provider 卡片里还能单独挑一张图。
 
-![Claude 娘](wallpapers/gijinka/claude-wallpaper.webp)
+![Claude 娘](wallpapers/gijinka/claude.webp)
 
 English: [README.md](README.md)
 
@@ -27,18 +27,18 @@ English: [README.md](README.md)
 侧栏 **「插件」→ 安装**，粘贴：
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.0.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 ```
 
 或者在终端：
 
 ```sh
-dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.0.0'
+dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0'
 ```
 
 装完**重启一次 App**：插件的客户端模块只在启动时扫描。之后改配置、换图只需要刷新页面。
 
-地址请固定到 tag 或 commit（`#v1.0.0`、`#8624a36…`），写分支名会跟着后续提交走。
+地址请固定到 tag 或 commit（`#v1.1.0`、`#8624a36…`），写分支名会跟着后续提交走。
 
 ## 装上之后
 
@@ -64,7 +64,7 @@ dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl
 | `webServer.register('/ai-girl-theme')` | `GET /index`（图片列表）、`GET\|POST /prefs`（保存的选择）、`GET /<file>`（图片） |
 | `settings.models.provider-card`、`settings.models.footer` | 选择器所在的两处插槽 |
 
-渐隐距离是从图片文件头读出来的（JPEG SOF、WebP 的 VP8/VP8L/VP8X 三种），所以横版壁纸和竖版立绘都能贴合自己的左边缘。
+渐隐距离是从图片文件头读出来的（JPEG SOF、WebP 的 VP8/VP8L/VP8X 三种），按每张图自己的宽度算，所以竖版立绘的左边缘过渡始终贴合。
 
 ## 自定义
 
@@ -88,9 +88,9 @@ dsh plugin --profile <profile> add 'git+https://github.com/zhouribin/dsh-ai-girl
     font: true           # false = 保持官方字体
     families: ['Zpix']   # 优先尝试的字体名，排在内置列表前
     rules:
-      - { provider: 'anthropic*', image: gijinka/claude-wallpaper.webp }
-      - { model: 'my-local-model*', image: gijinka/qwen-wallpaper.webp }
-      - { provider: 'openai*', model: 'o4*', image: gijinka/gpt-wallpaper.webp, scrimDark: 0.5 }
+      - { provider: 'anthropic*', image: gijinka/claude.webp }
+      - { model: 'my-local-model*', image: gijinka/qwen.webp }
+      - { provider: 'openai*', model: 'o4*', image: gijinka/gpt.webp, scrimDark: 0.5 }
 ```
 
 规则按顺序生效，后面的覆盖前面的；`provider` / `model` 结尾写 `*` 表示前缀匹配，两者可以同时写。
@@ -129,7 +129,7 @@ index.js            Host 端：图片复制、图片路由、样式表、bootstr
 client.js           客户端：选择器行、即时生效、保存状态
 cordis.patch.yml    默认的 provider/model → 图片规则
 locale/{en,zh}.json 插件列表里的标题和描述
-wallpapers/gijinka/ 31 张立绘（第三方作品，见 LICENSE-ART.md）
+wallpapers/gijinka/ 21 张竖版立绘（第三方作品，见 LICENSE-ART.md）
 ```
 
 ## 授权

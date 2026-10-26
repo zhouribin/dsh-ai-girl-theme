@@ -16,33 +16,33 @@
         font: true
         families: []
         rules:
-          - { provider: 'anthropic*', image: gijinka/claude-wallpaper.webp }
-          - { provider: 'openai*', image: gijinka/gpt-wallpaper.webp }
+          - { provider: 'anthropic*', image: gijinka/claude.webp }
+          - { provider: 'openai*', image: gijinka/gpt.webp }
           - { provider: 'google*', image: gijinka/gemini.webp }
-          - { provider: 'zhipu*', image: gijinka/glm-wallpaper.webp }
-          - { provider: 'bigmodel*', image: gijinka/glm-wallpaper.webp }
-          - { provider: 'moonshot*', image: gijinka/kimi-wallpaper.webp }
-          - { provider: 'xai*', image: gijinka/grok-wallpaper.webp }
+          - { provider: 'zhipu*', image: gijinka/glm.webp }
+          - { provider: 'bigmodel*', image: gijinka/glm.webp }
+          - { provider: 'moonshot*', image: gijinka/kimi.webp }
+          - { provider: 'xai*', image: gijinka/grok.webp }
           - { provider: 'mistral*', image: gijinka/mistral.webp }
           - { provider: 'minimax*', image: gijinka/minimax.webp }
           - { provider: 'tencent*', image: gijinka/hunyuan.webp }
-          - { provider: 'baidu*', image: gijinka/wenxin-wallpaper.webp }
-          - { provider: 'alibaba*', image: gijinka/qwen-wallpaper.webp }
-          - { provider: 'dashscope*', image: gijinka/qwen-wallpaper.webp }
-          - { provider: 'deepseek*', image: gijinka/deepseek-wallpaper.webp }
-          - { model: 'claude*', image: gijinka/claude-wallpaper.webp }
-          - { model: 'gpt*', image: gijinka/gpt-wallpaper.webp }
-          - { model: 'chatgpt*', image: gijinka/gpt-wallpaper.webp }
-          - { model: 'o1*', image: gijinka/gpt-wallpaper.webp }
-          - { model: 'o3*', image: gijinka/gpt-wallpaper.webp }
-          - { model: 'o4*', image: gijinka/gpt-wallpaper.webp }
+          - { provider: 'baidu*', image: gijinka/wenxin.webp }
+          - { provider: 'alibaba*', image: gijinka/qwen.webp }
+          - { provider: 'dashscope*', image: gijinka/qwen.webp }
+          - { provider: 'deepseek*', image: gijinka/deepseek.webp }
+          - { model: 'claude*', image: gijinka/claude.webp }
+          - { model: 'gpt*', image: gijinka/gpt.webp }
+          - { model: 'chatgpt*', image: gijinka/gpt.webp }
+          - { model: 'o1*', image: gijinka/gpt.webp }
+          - { model: 'o3*', image: gijinka/gpt.webp }
+          - { model: 'o4*', image: gijinka/gpt.webp }
           - { model: 'gpt-image*', image: gijinka/gpt-image2.webp }
           - { model: 'gemini*', image: gijinka/gemini.webp }
           - { model: 'gemma*', image: gijinka/gemini.webp }
-          - { model: 'glm*', image: gijinka/glm-wallpaper.webp }
-          - { model: 'kimi*', image: gijinka/kimi-wallpaper.webp }
-          - { model: 'moonshot*', image: gijinka/kimi-wallpaper.webp }
-          - { model: 'grok*', image: gijinka/grok-wallpaper.webp }
+          - { model: 'glm*', image: gijinka/glm.webp }
+          - { model: 'kimi*', image: gijinka/kimi.webp }
+          - { model: 'moonshot*', image: gijinka/kimi.webp }
+          - { model: 'grok*', image: gijinka/grok.webp }
           - { model: 'llama*', image: gijinka/llama.webp }
           - { model: 'mistral*', image: gijinka/mistral.webp }
           - { model: 'mixtral*', image: gijinka/mistral.webp }
@@ -50,13 +50,17 @@
           - { model: 'minimax*', image: gijinka/minimax.webp }
           - { model: 'abab*', image: gijinka/minimax.webp }
           - { model: 'hunyuan*', image: gijinka/hunyuan.webp }
-          - { model: 'ernie*', image: gijinka/wenxin-wallpaper.webp }
-          - { model: 'wenxin*', image: gijinka/wenxin-wallpaper.webp }
-          - { model: 'qwen*', image: gijinka/qwen-wallpaper.webp }
-          - { model: 'qwq*', image: gijinka/qwen-wallpaper.webp }
-          - { model: 'seed*', image: gijinka/seed-wallpaper.webp }
-          - { model: 'doubao*', image: gijinka/seed-wallpaper.webp }
-          - { model: 'rwkv*', image: gijinka/rwkv-wallpaper.webp }
+          - { model: 'ernie*', image: gijinka/wenxin.webp }
+          - { model: 'wenxin*', image: gijinka/wenxin.webp }
+          - { model: 'qwen*', image: gijinka/qwen.webp }
+          - { model: 'qwq*', image: gijinka/qwen.webp }
+          - { model: 'seed*', image: gijinka/seed.webp }
+          - { model: 'doubao*', image: gijinka/seed.webp }
+          - { model: 'rwkv*', image: gijinka/rwkv.webp }
           - { model: 'perplexity*', image: gijinka/perplexity.webp }
           - { model: 'sonar*', image: gijinka/perplexity.webp }
-          - { model: 'deepseek*', image: gijinka/deepseek-wallpaper.webp }
+          - { model: 'deepseek*', image: gijinka/deepseek.webp }
+          - { model: 'gpt-astra*', image: gijinka/gpt-astra.webp }
+          - { model: 'deepseek-v4flash*', image: gijinka/deepseek-v4flash.webp }
+          - { model: 'deepseek-harness*', image: gijinka/deepseek-harness.webp }
+          - { model: 'jev*', image: gijinka/jev.webp }
