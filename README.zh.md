@@ -130,6 +130,35 @@ macOS 上装完系统字体要重启 App 才会被页面识别。
 </details>
 
 <details>
+<summary><b>让别人也能搜到（插件索引）</b></summary>
+
+DSH 没有“提交到官方插件库”的入口；「发现」页读取的是**索引 URL**。本仓库根目录的 `market-index.json` 就是一份格式 1 索引，由 DSH 自带的校验器验证（每次 push 由 GitHub Actions 跑一遍）。
+
+**托管索引**（二选一）：
+
+| 方式 | 索引地址 |
+| --- | --- |
+| GitHub Pages（推荐） | `https://zhouribin.github.io/dsh-ai-girl-theme/market-index.json` |
+| 国内可达的代理 | `https://gh-proxy.com/https://raw.githubusercontent.com/zhouribin/dsh-ai-girl-theme/main/market-index.json` |
+
+Pages 开启方式：仓库 → Settings → Pages → Source 选 `Deploy from a branch` → `main` / `/ (root)` → Save。
+
+**别人怎么装**：
+
+1. 插件 → 添加插件，输入 `@deepseek-ai/dsh-experimental-plugin-market-bundle` 装上并重启 App；
+2. 「发现」→ 添加索引 → 填上面的地址；
+3. 搜「AI 娘化主题」→ 一键安装。
+
+改版本时记得同步 `market-index.json`（`version`、`source.commit`、`publishTimestamp`），CI 会在版本和 `package.json` 不一致时报红。本地自检：
+
+```sh
+npm install --no-save @deepseek-ai/dsh-plugin-market-index@next
+node scripts/validate-market-index.mjs
+```
+
+</details>
+
+<details>
 <summary><b>卸载 / 仓库结构 / 授权 / 兼容性</b></summary>
 
 ### 卸载

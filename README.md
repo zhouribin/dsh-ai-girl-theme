@@ -130,6 +130,35 @@ The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/V
 </details>
 
 <details>
+<summary><b>Let others find it in Discover (plugin index)</b></summary>
+
+DSH has no "submit to the official library" entry point; the **Discover** tab reads *index URLs*. `market-index.json` at the repository root is a format-1 index, validated with DSH's own validator on every push.
+
+**Host the index** (either works):
+
+| Option | Index URL |
+| --- | --- |
+| GitHub Pages (recommended) | `https://zhouribin.github.io/dsh-ai-girl-theme/market-index.json` |
+| Public proxy | `https://gh-proxy.com/https://raw.githubusercontent.com/zhouribin/dsh-ai-girl-theme/main/market-index.json` |
+
+Enable Pages: repository → Settings → Pages → Source: `Deploy from a branch` → `main` / `/ (root)` → Save.
+
+**How someone installs from it**:
+
+1. Plugins → Add plugin → `@deepseek-ai/dsh-experimental-plugin-market-bundle`, then restart the app;
+2. Discover → add the index URL above;
+3. Search "AI Girl Theme" → install.
+
+When you release a version, update `market-index.json` as well (`version`, `source.commit`, `publishTimestamp`) — CI fails when it disagrees with `package.json`. Check locally with:
+
+```sh
+npm install --no-save @deepseek-ai/dsh-plugin-market-index@next
+node scripts/validate-market-index.mjs
+```
+
+</details>
+
+<details>
 <summary><b>Uninstall / layout / licences / compatibility</b></summary>
 
 ### Uninstall
