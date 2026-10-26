@@ -98,11 +98,11 @@ const AURORA = {
 
 /** Provider/model patterns resolved to an aurora palette, later rules winning. */
 const AURORA_RULES = [
-  { key: 'ember', sel: '[data-provider-id="tx"]' },
-  { key: 'ocean', sel: '[data-provider-id^="deepseek"]' },
-  { key: 'violet', sel: '[data-model-id*="reasoner"], [data-model-id*="think"], [data-model-id*="r1"]' },
-  { key: 'azure', sel: '[data-model-id*="flash"], [data-model-id*="chat"], [data-model-id*="v4"]' },
-  { key: 'graphite', sel: '[data-model-id^="gpt"]' },
+  { key: 'ember', sel: '[data-provider-id="tx"]', attr: '[data-ai-girl-provider="tx"]' },
+  { key: 'ocean', sel: '[data-provider-id^="deepseek"]', attr: '[data-ai-girl-provider^="deepseek"]' },
+  { key: 'violet', sel: '[data-model-id*="reasoner"], [data-model-id*="think"], [data-model-id*="r1"]', attr: '[data-ai-girl-model*="reasoner"], [data-ai-girl-model*="think"], [data-ai-girl-model*="r1"]' },
+  { key: 'azure', sel: '[data-model-id*="flash"], [data-model-id*="chat"], [data-model-id*="v4"]', attr: '[data-ai-girl-model*="flash"], [data-ai-girl-model*="chat"], [data-ai-girl-model*="v4"]' },
+  { key: 'graphite', sel: '[data-model-id^="gpt"]', attr: '[data-ai-girl-model^="gpt"]' },
 ];
 
 /** Default configuration; everything is overridable from the Loader row. */
@@ -152,7 +152,7 @@ function isSafeName(name) {
     && !name.startsWith('/') && !name.split('/').includes('..');
 }
 
-/** CSS `url(...)` for one generated aurora, or `undefined` for an unknown palette. */
+/** Bare data URI for one generated aurora, or `undefined` for an unknown palette. */
 function auroraUrl(key) {
   const spec = AURORA[key];
   if (spec === undefined) return undefined;
@@ -173,7 +173,7 @@ function auroraUrl(key) {
     + "<stop offset='1' stop-color='#000000' stop-opacity='0.52'/></linearGradient></defs>"
     + `<rect width='1600' height='1000' fill='${spec.base}'/>${shapes.join('')}`
     + "<rect width='1600' height='1000' fill='url(#depth)'/></svg>";
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
 /** Pixel size of one image, read from its header; `undefined` when unrecognized. */
@@ -293,6 +293,56 @@ function pictureLines(selector, url, size, scrimLight, scrimDark, boost = false)
   ];
 }
 
+/** Full-bleed fallback anchored on the Client half's remembered body attributes. */
+function attrCoverLines(attr, url, scrimLight, scrimDark) {
+  return [
+    `html[data-ds-theme-source] body:is(${attr}){`
+      + `background-image:linear-gradient(rgba(255,255,255,${scrimLight}),rgba(255,255,255,${scrimLight})),url("${url}") !important;`
+      + 'background-size:cover,cover !important;background-position:center center,center !important;'
+      + 'background-repeat:no-repeat,no-repeat !important;background-attachment:fixed,fixed !important;}',
+    `html[data-ds-theme-source] body[data-ds-dark-theme]:is(${attr}){`
+      + `background-image:linear-gradient(rgba(9,10,14,${scrimDark}),rgba(9,10,14,${scrimDark})),url("${url}") !important;}`,
+  ];
+}
+
+/**
+ * Same picture declarations as {@link pictureLines}, anchored on the
+ * `data-ai-girl-provider` / `data-ai-girl-model` attributes the Client half keeps
+ * on `body`, so the backdrop survives the composer unmounting.
+ * @param attr - body attribute selector (may be an `:is()` list).
+ * @param url - served picture URL.
+ * @param size - pixel size of the picture, when known.
+ * @param scrimLight - light-palette scrim alpha.
+ * @param scrimDark - dark-palette scrim alpha.
+ * @param boost - raise specificity so a saved choice beats every configured rule.
+ */
+function attrPictureLines(attr, url, size, scrimLight, scrimDark, boost = false) {
+  const root = boost ? 'html[data-ds-theme-source]:root' : 'html[data-ds-theme-source]';
+  if (size === undefined || !(size.width > 0) || !(size.height > 0)) {
+    return boost
+      ? attrCoverLines(attr, url, scrimLight, scrimDark).map((line) => line.replace('html[data-ds-theme-source]', root))
+      : attrCoverLines(attr, url, scrimLight, scrimDark);
+  }
+  const [start, end] = fadeSpan(size.width);
+  const box = `calc(100vh * ${(size.width / size.height).toFixed(4)}) 100%`;
+  return [
+    `${root} body:is(${attr}){`
+      + 'background-color:#ffffff !important;'
+      + 'background-image:linear-gradient(to right,'
+      + `rgba(255,255,255,1) 0px,rgba(255,255,255,1) ${String(start)}px,`
+      + `rgba(255,255,255,${scrimLight}) ${String(end)}px,rgba(255,255,255,${scrimLight}) 100%),url("${url}") !important;`
+      + `background-size:${box},auto 100% !important;`
+      + 'background-position:right center,right center !important;'
+      + 'background-repeat:no-repeat,no-repeat !important;'
+      + 'background-attachment:fixed,fixed !important;}',
+    `${root} body[data-ds-dark-theme]:is(${attr}){`
+      + 'background-color:#151517 !important;'
+      + 'background-image:linear-gradient(to right,'
+      + `rgba(21,21,23,1) 0px,rgba(21,21,23,1) ${String(start)}px,`
+      + `rgba(9,10,14,${scrimDark}) ${String(end)}px,rgba(9,10,14,${scrimDark}) 100%),url("${url}") !important;}`,
+  ];
+}
+
 /** One provider/model pair as a CSS attribute selector. */
 function pairSelector(provider, model) {
   const parts = [];
@@ -309,6 +359,21 @@ function pairSelector(provider, model) {
   return parts.length === 0 ? undefined : parts.join('');
 }
 
+/** Body-attribute selector for the provider/model the Client half remembers. */
+function currentAttr(provider, model) {
+  const parts = [];
+  const add = (key, value) => {
+    if (typeof value !== 'string' || value.trim() === '') return;
+    const trimmed = value.trim();
+    parts.push(trimmed.endsWith('*')
+      ? `[data-ai-girl-${key}^=${cssAttr(trimmed.slice(0, -1))}]`
+      : `[data-ai-girl-${key}=${cssAttr(trimmed)}]`);
+  };
+  add('provider', provider);
+  add('model', model);
+  return parts.length === 0 ? undefined : parts.join('');
+}
+
 /** Resolve the row config into the values the stylesheet and the route need. */
 function normalize(raw) {
   const config = raw !== null && typeof raw === 'object' ? raw : {};
@@ -318,13 +383,14 @@ function normalize(raw) {
   for (const entry of Array.isArray(config.rules) ? config.rules : []) {
     if (entry === null || typeof entry !== 'object') continue;
     const image = typeof entry.image === 'string' ? entry.image.trim() : '';
-    const selector = pairSelector(
-      typeof entry.provider === 'string' && entry.provider.trim() !== '' ? entry.provider.trim() : undefined,
-      typeof entry.model === 'string' && entry.model.trim() !== '' ? entry.model.trim() : undefined,
-    );
-    if (selector === undefined || !isSafeName(image)) continue;
+    const provider = typeof entry.provider === 'string' && entry.provider.trim() !== '' ? entry.provider.trim() : undefined;
+    const model = typeof entry.model === 'string' && entry.model.trim() !== '' ? entry.model.trim() : undefined;
+    const selector = pairSelector(provider, model);
+    const attr = currentAttr(provider, model);
+    if (selector === undefined || attr === undefined || !isSafeName(image)) continue;
     rules.push({
       selector,
+      attr,
       image,
       url: `${ROUTE}/${image}`,
       scrimDark: alpha(entry.scrimDark, scrimDark),
@@ -431,9 +497,11 @@ export function buildStyle(raw, prefs = {}) {
     const url = auroraUrl(rule.key);
     if (url === undefined) continue;
     lines.push(...pictureLines(rule.sel, url, undefined, options.scrimLight, options.scrimDark));
+    if (rule.attr !== undefined) lines.push(...attrPictureLines(rule.attr, url, undefined, options.scrimLight, options.scrimDark));
   }
   for (const rule of options.rules) {
     lines.push(...pictureLines(rule.selector, rule.url, imageSize(options.dir, rule.image), rule.scrimLight, rule.scrimDark));
+    lines.push(...attrPictureLines(rule.attr, rule.url, imageSize(options.dir, rule.image), rule.scrimLight, rule.scrimDark));
   }
   for (const [provider, image] of Object.entries(prefs)) {
     if (!isSafeName(image)) continue;
@@ -445,6 +513,17 @@ export function buildStyle(raw, prefs = {}) {
       options.scrimDark,
       true,
     ));
+    const attr = currentAttr(provider);
+    if (attr !== undefined) {
+      lines.push(...attrPictureLines(
+        attr,
+        `${ROUTE}/${image}`,
+        imageSize(options.dir, image),
+        options.scrimLight,
+        options.scrimDark,
+        true,
+      ));
+    }
   }
   return lines.join('\n');
 }

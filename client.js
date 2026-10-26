@@ -92,6 +92,52 @@ window.__ModuleLoader__.load({
       return `"${String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
     }
 
+    /** Body attributes carrying the provider/model the composer last showed. */
+    const PROVIDER_ATTR = 'aiGirlProvider';
+    const MODEL_ATTR = 'aiGirlModel';
+    const STORE_KEY = 'dsh-ai-girl-model';
+
+    /** Write the current pair onto <body>; never cleared when the composer unmounts. */
+    function setCurrent(provider, model) {
+      if (typeof document === 'undefined' || document.body === null) return;
+      const body = document.body;
+      const nextModel = typeof model === 'string' ? model : '';
+      if (body.dataset[PROVIDER_ATTR] === provider && body.dataset[MODEL_ATTR] === nextModel) return;
+      body.dataset[PROVIDER_ATTR] = provider;
+      body.dataset[MODEL_ATTR] = nextModel;
+      try {
+        window.sessionStorage.setItem(STORE_KEY, JSON.stringify({ provider, model: nextModel }));
+      } catch {
+        /* storage can be unavailable; the live attribute is enough */
+      }
+    }
+
+    /** Recover the last pair before the composer has rendered (reload / active turn). */
+    function restoreCurrent() {
+      if (typeof window === 'undefined') return;
+      try {
+        const saved = JSON.parse(window.sessionStorage.getItem(STORE_KEY) ?? 'null');
+        if (saved !== null && typeof saved === 'object' && typeof saved.provider === 'string' && saved.provider !== '') {
+          setCurrent(saved.provider, saved.model);
+        }
+      } catch {
+        /* ignore malformed or unavailable storage */
+      }
+    }
+
+    /** Read the composer's model label and remember it, without touching open menus. */
+    function rememberCurrent() {
+      if (typeof document === 'undefined') return;
+      const composer = document.querySelector('[data-conversation-region="composer"]');
+      if (composer === null) return;
+      const trigger = composer.querySelector('button[aria-haspopup="menu"] [data-provider-id]');
+      const fallback = [...composer.querySelectorAll('[data-provider-id]')]
+        .find((node) => node.closest('[role="menu"], [role="listbox"]') === null);
+      const node = trigger ?? fallback;
+      if (node === undefined || node === null || typeof node.dataset.providerId !== 'string' || node.dataset.providerId === '') return;
+      setCurrent(node.dataset.providerId, node.dataset.modelId);
+    }
+
     /** Distance over which the picture's near edge dissolves into the backdrop, in px. */
     function fadeSpan(width) {
       const start = Math.max(24, Math.min(96, Math.round(width * 0.05)));
@@ -108,7 +154,8 @@ window.__ModuleLoader__.load({
      * @param size - pixel size of the picture, when known.
      */
     function ruleFor(provider, url, boot, size) {
-      const has = `html[data-ds-theme-source]:root body:has(button[aria-haspopup="menu"] :is([data-provider-id=${cssAttr(provider)}]))`;
+      const attr = `[data-ai-girl-provider=${cssAttr(provider)}]`;
+      const has = `html[data-ds-theme-source]:root body:is(${attr})`;
       const lightScrim = `${boot.scrimLight}`;
       const darkScrim = `${boot.scrimDark}`;
       if (size === undefined || !(size.width > 0) || !(size.height > 0)) {
@@ -116,7 +163,7 @@ window.__ModuleLoader__.load({
           + `background-image:linear-gradient(rgba(255,255,255,${lightScrim}),rgba(255,255,255,${lightScrim})),url("${url}") !important;`
           + 'background-size:cover,cover !important;background-position:center center,center !important;'
           + 'background-repeat:no-repeat,no-repeat !important;background-attachment:fixed,fixed !important;}\n'
-          + `html[data-ds-theme-source]:root body[data-ds-dark-theme]:has(button[aria-haspopup="menu"] :is([data-provider-id=${cssAttr(provider)}])){`
+          + `html[data-ds-theme-source]:root body[data-ds-dark-theme]:is(${attr}){`
           + `background-image:linear-gradient(rgba(9,10,14,${darkScrim}),rgba(9,10,14,${darkScrim})),url("${url}") !important;}`;
       }
       const span = fadeSpan(size.width);
@@ -130,7 +177,7 @@ window.__ModuleLoader__.load({
         + 'background-position:right center,right center !important;'
         + 'background-repeat:no-repeat,no-repeat !important;'
         + 'background-attachment:fixed,fixed !important;}\n'
-        + `html[data-ds-theme-source]:root body[data-ds-dark-theme]:has(button[aria-haspopup="menu"] :is([data-provider-id=${cssAttr(provider)}])){`
+        + `html[data-ds-theme-source]:root body[data-ds-dark-theme]:is(${attr}){`
         + 'background-color:#151517 !important;'
         + 'background-image:linear-gradient(to right,'
         + `rgba(21,21,23,1) 0px,rgba(21,21,23,1) ${span[0]}px,`
@@ -388,6 +435,19 @@ window.__ModuleLoader__.load({
           };
         }, 'wallpaper: picker styles');
         ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'wallpaper: picker copy');
+        ctx.effect(() => {
+          if (typeof document === 'undefined' || document.body === null) return undefined;
+          restoreCurrent();
+          rememberCurrent();
+          const observer = new MutationObserver(rememberCurrent);
+          observer.observe(document.body, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['data-provider-id', 'data-model-id'],
+          });
+          return () => observer.disconnect();
+        }, 'wallpaper: current model');
         ctx.effect(() => {
           const boot = bootstrap();
           if (boot === undefined) return undefined;
