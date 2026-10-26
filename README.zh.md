@@ -2,7 +2,7 @@
 
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 换一套「AI 拟人」外观：**对话区背景跟着模型变**，整个界面换成像素字体，每张 provider 卡片里还能单独挑一张图。
 
-![效果预览：对话区右侧竖版立绘 + 全局像素字体](docs/preview.webp)
+![效果预览：整窗截图，深色主题 + 对话区右侧竖版立绘 + 全局像素字体](docs/preview.webp)
 
 ## 不想研究？直接把下面这段丢给你的 DSH
 

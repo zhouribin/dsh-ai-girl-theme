@@ -2,7 +2,7 @@
 
 An "AI gijinka" theme pack for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness): the conversation backdrop follows the model you are talking to, the whole interface switches to a pixel typeface, and every provider gets its own picture picker in *Settings → Models*.
 
-![Preview: portrait backdrop in the conversation and the pixel typeface](docs/preview.webp)
+![Preview: full window, dark palette, portrait backdrop in the conversation, pixel typeface](docs/preview.webp)
 
 ## Don't want to read this? Paste one prompt into your DSH
 
