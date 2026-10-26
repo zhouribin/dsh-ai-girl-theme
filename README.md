@@ -115,7 +115,7 @@ Everything is one `<style>` row on the page bootstrap plus one read-only route �
 | --- | --- |
 | `sessions.binding(sessionId).session.projections.faceOf('modelSelection')` | Reading the current provider/model from the session's durable projection — the same source the composer's model seat uses, so the backdrop survives the composer being unmounted |
 | `body[data-ai-girl-provider]` / `body[data-ai-girl-model]` | The stable anchor the host stylesheet paints from; the client mirrors the projection onto it |
-| `--dsw-alias-bg-base`, `data-ds-dark-theme`, `data-ds-theme-source` | Making the frame and conversation column translucent, with separate light/dark values |
+| `--dsw-alias-bg-base`, `--dsw-specific-sidebar-fill` (Windows titlebar frame), `data-ds-dark-theme`, `data-ds-theme-source` | Making the frame and conversation column translucent, with separate light/dark values |
 | `--dsw-font-family`, `--ds-font-family-code`, `--dsw-font-mono` | The pixel typeface |
 | `webserver/index-inject` | The stylesheet, `current` (the host default selection) and the picker's global (`__DSH_AI_GIRL_THEME__`) |
 | `webServer.register('/ai-girl-theme')` | `/index` (picture list), `/prefs` (saved choices), `/<file>` (pictures) |
@@ -132,6 +132,7 @@ The picture's pixel size is read from its file header (JPEG SOF, WebP VP8/VP8L/V
 | --- | --- |
 | Installed but nothing changed | The app was not restarted, so the client module never loaded. Full quit and reopen (Desktop: tray → Quit). |
 | Font works but the wallpaper never appears | v1.2.0 anchored the backdrop on the composer's model button; while a turn is generating (or after restarting into a running session) that button is not in the DOM. v1.2.1 reads the session's `modelSelection` projection instead. Upgrade. |
+| Wallpaper flashes once at startup and disappears (Windows) | The titlebar frame paints with `--dsw-specific-sidebar-fill`, which is opaque; v1.2.0 only overrode `--dsw-alias-bg-base`, so the frame covered the body backdrop. v1.2.1 also overrides `--dsw-specific-sidebar-fill`. Upgrade. |
 | Picker rows missing | The plugin is disabled in *Plugins*, or `@deepseek-ai/dsh-client-ui-settings-models` is not in this profile. |
 | Picture missing for one model | That provider has no rule; pick one in the UI or add a `rules` entry. Unmatched models fall back to the aurora. |
 | Picture washed out / too dark | Tune `scrimDark` (main knob) and `veilDark`. |

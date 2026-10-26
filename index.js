@@ -493,6 +493,13 @@ export function buildStyle(raw, prefs = {}) {
   }
   lines.push(`html[data-ds-theme-source] body{--dsw-alias-bg-base:rgba(255,255,255,${options.veilLight}) !important;}`);
   lines.push(`html[data-ds-theme-source] body[data-ds-dark-theme]{--dsw-alias-bg-base:rgba(21,21,23,${options.veilDark}) !important;}`);
+  // Windows' titlebar mode paints the frame with `--dsw-specific-sidebar-fill`
+  // (opaque); macOS paints it transparent. Without this override the frame covers
+  // the body backdrop as soon as the app mounts (the "visible for one frame" bug).
+  const windowsBody = 'html[data-platform="win32"][data-ds-theme-source] body, html[data-windows-titlebar][data-ds-theme-source] body, html[data-ds-theme-source] body[data-windows-titlebar]';
+  const windowsDark = 'html[data-platform="win32"][data-ds-theme-source] body[data-ds-dark-theme], html[data-windows-titlebar][data-ds-theme-source] body[data-ds-dark-theme], html[data-ds-theme-source] body[data-windows-titlebar][data-ds-dark-theme]';
+  lines.push(`${windowsBody}{--dsw-specific-sidebar-fill:rgba(255,255,255,${options.veilLight}) !important;}`);
+  lines.push(`${windowsDark}{--dsw-specific-sidebar-fill:rgba(21,21,23,${options.veilDark}) !important;}`);
   for (const rule of AURORA_RULES) {
     const url = auroraUrl(rule.key);
     if (url === undefined) continue;

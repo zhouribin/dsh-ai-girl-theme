@@ -114,7 +114,7 @@ macOS 上装完系统字体要重启 App 才会被页面识别。
 | --- | --- |
 | `sessions.binding(sessionId).session.projections.faceOf('modelSelection')` | 从会话的持久化投影读当前 provider/model——和输入框模型选择器读的是同一个源，所以 composer 卸载后背景仍在 |
 | `body[data-ai-girl-provider]` / `body[data-ai-girl-model]` | 宿主样式表实际绘制的稳定锚点；客户端把投影镜像到这两个属性上 |
-| `--dsw-alias-bg-base`、`data-ds-dark-theme`、`data-ds-theme-source` | 让主区和对话列透出背景，浅色/深色各一套 |
+| `--dsw-alias-bg-base`、`--dsw-specific-sidebar-fill`（Windows 标题栏 frame）、`data-ds-dark-theme`、`data-ds-theme-source` | 让主区和对话列透出背景，浅色/深色各一套 |
 | `--dsw-font-family`、`--ds-font-family-code`、`--dsw-font-mono` | 像素字体 |
 | `webserver/index-inject` | 注入样式表、`current`（宿主默认选择）和全局变量 `__DSH_AI_GIRL_THEME__` |
 | `webServer.register('/ai-girl-theme')` | `/index`（图片列表）、`/prefs`（保存的选择）、`/<file>`（图片） |
@@ -131,6 +131,7 @@ macOS 上装完系统字体要重启 App 才会被页面识别。
 | --- | --- |
 | 装了但没任何变化 | App 没重启，客户端模块没加载。完全退出重开（Desktop 托盘 → 退出）。 |
 | 字体生效但背景图不显示 | v1.2.0 把背景锚在 composer 的模型按钮上；生成中或重启进入运行中的会话时按钮不在 DOM。v1.2.1 改为读会话的 `modelSelection` 投影，升级即可。 |
+| 背景只闪一下就没（Windows） | 标题栏 frame 用的是不透明的 `--dsw-specific-sidebar-fill`，v1.2.0 只覆盖了 `--dsw-alias-bg-base`，frame 一挂载就盖住 body 背景。v1.2.1 也覆盖 `--dsw-specific-sidebar-fill`，升级即可。 |
 | 设置里没有「对话背景」 | 插件在「插件」页被禁用了，或这个 profile 里没有 `@deepseek-ai/dsh-client-ui-settings-models`。 |
 | 某个模型没有背景 | 那个 provider 没命中规则；界面里选一张，或补一条 `rules`。没命中时是极光背景。 |
 | 图片发白 / 太暗 | 调 `scrimDark`（主开关）和 `veilDark`。 |
