@@ -133,17 +133,144 @@ window.__ModuleLoader__.load({
       }
     }
 
-    /** Read the composer's model label and remember it, without touching open menus. */
-    function rememberCurrent() {
-      if (typeof document === 'undefined') return;
-      const composer = document.querySelector('[data-conversation-region="composer"]');
-      if (composer === null) return;
-      const trigger = composer.querySelector('button[aria-haspopup="menu"] [data-provider-id]');
-      const fallback = [...composer.querySelectorAll('[data-provider-id]')]
-        .find((node) => node.closest('[role="menu"], [role="listbox"]') === null);
-      const node = trigger ?? fallback;
-      if (node === undefined || node === null || typeof node.dataset.providerId !== 'string' || node.dataset.providerId === '') return;
-      setCurrent(node.dataset.providerId, node.dataset.modelId);
+    /** One `{provider, model}` out of a `modelSelection` projection value. */
+    function selectionOf(value) {
+      const pick = value?.next ?? value?.lastUsed ?? null;
+      if (pick === null || typeof pick !== 'object') return null;
+      const provider = typeof pick.provider === 'string' ? pick.provider : '';
+      const model = typeof pick.model === 'string' ? pick.model : '';
+      if (provider === '' && model === '') return null;
+      return { provider, model };
+    }
+
+    /** A non-empty string id, or null. */
+    function asId(value) {
+      return typeof value === 'string' && value !== '' ? value : null;
+    }
+
+    /**
+     * Watch the current session's durable `modelSelection` projection and mirror it
+     * onto `<body>`. This is the same source the composer's model seat reads, so it
+     * is available while the composer itself is unmounted.
+     * @param ctx - client plugin context.
+     * @returns disposer.
+     */
+    function watchSessionModel(ctx) {
+      let service = null;
+      let list = null;
+      let offList = null;
+      let sessionId = null;
+      let face = null;
+      let offFace = null;
+      let retry = null;
+      let retries = 0;
+      let poll = null;
+
+      const release = () => {
+        if (offFace !== null) {
+          offFace();
+          offFace = null;
+        }
+        face = null;
+      };
+      const emit = () => {
+        let selection = null;
+        try {
+          selection = selectionOf(face?.getSnapshot?.());
+        } catch {
+          selection = null;
+        }
+        if (selection === null) return;
+        setCurrent(selection.provider, selection.model);
+      };
+      const resolveId = () => {
+        try {
+          const ui = ctx.get('uiSession')?.current?.getSnapshot?.();
+          const id = asId(ui?.key);
+          if (id !== null) return id;
+        } catch {
+          /* optional service */
+        }
+        const snapshot = list?.getSnapshot?.();
+        const legacy = asId(snapshot?.current);
+        if (legacy !== null) return legacy;
+        const byId = snapshot?.byId;
+        if (byId !== null && typeof byId === 'object') {
+          for (const row of Object.values(byId)) {
+            if (row !== null && typeof row === 'object' && (row.retainedBy?.mainView ?? 0) > 0) {
+              const id = asId(row.id);
+              if (id !== null) return id;
+            }
+          }
+        }
+        return null;
+      };
+      const bind = () => {
+        if (service === null) return;
+        const id = resolveId();
+        if (id === sessionId && face !== null) {
+          emit();
+          return;
+        }
+        release();
+        sessionId = id;
+        if (id === null) return;
+        try {
+          let binding = typeof service.binding === 'function' ? service.binding(id) : undefined;
+          if (binding === undefined && typeof service.scope === 'function') {
+            service.scope(id);
+            binding = typeof service.binding === 'function' ? service.binding(id) : undefined;
+          }
+          const nextFace = binding?.session?.projections?.faceOf?.('modelSelection');
+          if (nextFace !== undefined && typeof nextFace.subscribe === 'function' && typeof nextFace.getSnapshot === 'function') {
+            face = nextFace;
+            offFace = nextFace.subscribe(emit);
+          }
+        } catch {
+          face = null;
+          offFace = null;
+        }
+        emit();
+      };
+      const tick = () => {
+        if (list === null) return;
+        if (resolveId() !== sessionId || face === null) bind();
+        else emit();
+      };
+      const attach = () => {
+        let svc;
+        try {
+          svc = ctx.get('sessions');
+        } catch {
+          return false;
+        }
+        if (svc === undefined || svc === null) return false;
+        const nextList = svc.list;
+        if (nextList === undefined || typeof nextList.subscribe !== 'function' || typeof nextList.getSnapshot !== 'function') return false;
+        service = svc;
+        list = nextList;
+        offList = nextList.subscribe(bind);
+        if (poll === null) poll = window.setInterval(tick, 1500);
+        bind();
+        return true;
+      };
+      if (!attach()) {
+        retry = window.setInterval(() => {
+          retries += 1;
+          if (attach() || retries >= 300) {
+            window.clearInterval(retry);
+            retry = null;
+          }
+        }, 400);
+      }
+      return () => {
+        if (retry !== null) window.clearInterval(retry);
+        if (poll !== null) window.clearInterval(poll);
+        if (offList !== null) offList();
+        service = null;
+        list = null;
+        release();
+      };
     }
 
     /** Distance over which the picture's near edge dissolves into the backdrop, in px. */
@@ -444,18 +571,9 @@ window.__ModuleLoader__.load({
         }, 'wallpaper: picker styles');
         ctx.effect(() => ctx.locale.register(NS, { zh, en }), 'wallpaper: picker copy');
         ctx.effect(() => {
-          if (typeof document === 'undefined' || document.body === null) return undefined;
           restoreCurrent();
-          rememberCurrent();
-          const observer = new MutationObserver(rememberCurrent);
-          observer.observe(document.body, {
-            subtree: true,
-            childList: true,
-            attributes: true,
-            attributeFilter: ['data-provider-id', 'data-model-id'],
-          });
-          return () => observer.disconnect();
-        }, 'wallpaper: current model');
+          return watchSessionModel(ctx);
+        }, 'wallpaper: session model');
         ctx.effect(() => {
           const boot = bootstrap();
           if (boot === undefined) return undefined;
