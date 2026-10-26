@@ -12,7 +12,7 @@ Copy the whole block into the chat of the DSH you are running — it installs th
 Please install the "AI Girl Theme" into the current DSH profile. Install only — do not change any other configuration.
 
 Install spec (pinned version, do not replace it with a branch name):
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
 
 Steps:
 1. Call plugin_manager with action=install_bundle and target=<the spec above>. If it answers already-installed, skip the install instead of duplicating it.
@@ -32,7 +32,7 @@ Then **restart the app once** (the client half is scanned at boot); after that, 
 Sidebar **Plugins → Install**, paste:
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
 ```
 
 Or from a terminal: `dsh plugin --profile <profile> add '<the spec above>'`, then restart the app.
@@ -40,8 +40,7 @@ Or from a terminal: `dsh plugin --profile <profile> add '<the spec above>'`, the
 ## What it does
 
 - **One backdrop per model**: Claude 娘, GPT 龙娘, Gemini 娘, GLM 娘, Qwen 娘, Kimi 娘, Grok 娘, Hunyuan 娘, Wenxin 娘, MiniMax 娘, Mistral 娘, Llama 娘, Seed 娘, RWKV 娘, DeepSeek 娘 — matched by provider or model id, with a generated aurora fallback.
-- **Pixel typeface everywhere**: interface, conversation, code blocks and terminal share one font stack; a face that is not installed is skipped, so the shipped look returns instead of breaking.
-  > The font file is **not bundled** (licence and size), so the pack uses a pixel font already installed on the system — the pixel Chinese in the screenshot comes from `brew install --cask font-zpix`. Without one, the interface keeps its shipped typeface.
+- **Pixel typeface everywhere, font included**: Fusion Pixel 12px (Simplified Chinese + Latin, woff2, ~940 KB, OFL) ships with the bundle, so the pixel look works out of the box. Prefer a system face? List it in `families`; set `bundledFont: false` to drop the bundled one.
 - **Per-provider picker**: one row in every provider card, plus a footer row for providers without a card (the signed-in account). Choices persist and outrank the rules.
 - **Self-contained and offline**: pictures are served by the plugin from `~/.dsh/themes/images`; nothing inside the DSH installation is modified.
 
@@ -79,15 +78,22 @@ Rules are evaluated in order and the last match wins; a provider or model ending
 
 ### Pixel fonts
 
-The pack ships no font binaries; it uses what the system has (macOS exposes a newly installed font after an app restart):
+**Fusion Pixel 12px Proportional (Simplified Chinese)** is bundled under `fonts/` as woff2 plus `OFL.txt` (SIL Open Font License 1.1, by TakWolf) — nothing to install.
+
+To prefer another face already on the system (Zpix, VT323, …):
+
+```yaml
+config:
+  families: ['Zpix']       # tried before the bundled face
+  # bundledFont: false      # stop using the bundled face entirely
+```
 
 ```sh
 brew install --cask font-zpix            # Zpix — Chinese + Latin
-brew install --cask font-fusion-pixel    # Fusion Pixel — OFL
 brew install --cask font-vt323           # VT323 — Latin only
 ```
 
-With no pixel font installed the interface simply stays in its shipped typeface.
+macOS exposes a newly installed system font to the app after a restart.
 
 </details>
 
@@ -137,12 +143,14 @@ index.js             Host half: seeding, picture route, stylesheet, bootstrap gl
 client.js            Client half: picker rows, live apply, saved state
 cordis.patch.yml     Default provider/model → picture rules (48)
 locale/{en,zh}.json  Bundle title and description for the Plugins list
+fonts/               Bundled pixel face (Fusion Pixel 12px zh_hans, OFL 1.1)
 wallpapers/gijinka/  21 portrait pictures (third-party artwork — see LICENSE-ART.md)
 ```
 
 ### Licence
 
 - **Code**: MIT — see [LICENSE](LICENSE).
+- **Font**: `fonts/` ships Fusion Pixel by **TakWolf** under the **SIL Open Font License 1.1** — see [`fonts/OFL.txt`](fonts/OFL.txt).
 - **Artwork**: third-party work by **ZipZipPipe** (the DeepSeek series derives from **上善无形**'s original character), tagged **CC BY-NC-SA 4.0** in the source gallery — attribution required, **non-commercial**, share-alike. Per-file list in [LICENSE-ART.md](LICENSE-ART.md).
 - For a fully MIT, freely redistributable plugin, drop the pictures: `git rm -r wallpapers/gijinka` — the pack keeps working and falls back to the generated aurora backgrounds.
 

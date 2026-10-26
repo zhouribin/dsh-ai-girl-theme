@@ -12,7 +12,7 @@
 请帮我把「AI 娘化主题」装到当前这个 DSH profile 上，只需要装，不用改配置。
 
 安装地址（固定版本，不要替我改成分支名）：
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
 
 步骤：
 1. 用 plugin_manager 的 install_bundle，target 直接用上面这串地址。如果返回 already-installed，就跳过安装、不要重复装。
@@ -32,7 +32,7 @@ git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 侧栏 **「插件」→ 安装**，粘贴：
 
 ```
-git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
+git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.2.0
 ```
 
 或者终端：`dsh plugin --profile <profile> add '<上面那串>'`，然后重启 App。
@@ -40,8 +40,7 @@ git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 ## 它做了什么
 
 - **一个模型一张背景**：Claude 娘、GPT 龙娘、Gemini 娘、GLM 娘、Qwen 娘、Kimi 娘、Grok 娘、混元娘、文心娘、MiniMax 娘、Mistral 娘、Llama 娘、Seed 娘、RWKV 娘、DeepSeek 娘…… 没匹配到就用内置极光。
-- **全局像素字体**：界面、对话、代码块、终端统一一套字体栈；系统里没装的字体名会被跳过，回落默认外观，不会把界面弄坏。
-  > 字体文件**不在包里**（授权和体积原因），用的是系统已安装的像素字体——上面截图里的中文像素字来自 `brew install --cask font-zpix`。没装字体时界面保持官方外观。
+- **全局像素字体，字体随包自带**：内置 Fusion Pixel 12px（简体中文 + 拉丁，woff2 约 940KB，OFL 授权），界面、对话、代码块、终端统一换；想优先用系统里的字体，写 `families` 即可，`bundledFont: false` 可以关掉自带字体。
 - **每张 provider 卡片可单独选图**：登录账号这种没有卡片的 provider 单独列在底部。选择会记住，优先级高于规则。
 - **自带素材、可离线**：图片由插件自己的路由从 `~/.dsh/themes/images` 提供，不联网、不改 DSH 安装目录。
 
@@ -79,15 +78,22 @@ git+https://github.com/zhouribin/dsh-ai-girl-theme.git#v1.1.0
 
 ### 像素字体
 
-字体不在包里，用系统已装的（macOS 装完字体要重启 App 才会被页面识别）：
+包里已经带了 **Fusion Pixel 12px Proportional（简体中文）**，`fonts/` 下是 woff2 + `OFL.txt`（SIL Open Font License 1.1，作者 TakWolf）。所以**装完就有像素字，不需要额外装字体**。
+
+想换成系统里的其它像素字体（比如 Zpix、VT323）：
+
+```yaml
+config:
+  families: ['Zpix']       # 排在自带字体前面
+  # bundledFont: false      # 完全不使用自带字体
+```
 
 ```sh
 brew install --cask font-zpix            # 最像素，中文 + 英文
-brew install --cask font-fusion-pixel    # 方舟像素，OFL
 brew install --cask font-vt323           # VT323，纯英文
 ```
 
-一个像素字体都没装时，界面就是官方默认字体。
+macOS 上装完系统字体要重启 App 才会被页面识别。
 
 </details>
 
@@ -137,12 +143,14 @@ index.js            Host 端：图片复制、图片路由、样式表、bootstr
 client.js           客户端：选择器行、即时生效、保存状态
 cordis.patch.yml    默认的 provider/model → 图片规则（48 条）
 locale/{en,zh}.json 插件列表里的标题和描述
+fonts/              自带像素字体（Fusion Pixel 12px zh_hans，OFL 1.1）
 wallpapers/gijinka/ 21 张竖版立绘（第三方作品，见 LICENSE-ART.md）
 ```
 
 ### 授权
 
 - **代码**：MIT，见 [LICENSE](LICENSE)。
+- **字体**：`fonts/` 是 Fusion Pixel（作者 TakWolf），**SIL Open Font License 1.1**，许可证原文见 [`fonts/OFL.txt`](fonts/OFL.txt)。
 - **图片**：第三方作品，作者 **ZipZipPipe**（DeepSeek 系列为「**上善无形**」原角色二创），图库中标为 **CC BY-NC-SA 4.0**——必须署名、**不能商用**、衍生需同协议。逐文件清单见 [LICENSE-ART.md](LICENSE-ART.md)。
 - 想要纯 MIT、可随意分发的版本：`git rm -r wallpapers/gijinka` 后提交，插件仍可用，只是退回内置极光背景。
 

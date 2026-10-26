@@ -31,6 +31,12 @@ const GLOBAL_NAME = '__DSH_AI_GIRL_THEME__';
 const PREFS_FILE = 'prefs.json';
 /** Directory bundled pictures are seeded from. */
 const BUNDLED = fileURLToPath(new URL('./wallpapers', import.meta.url));
+/** Directory the bundled pixel face is served from. */
+const FONTS = fileURLToPath(new URL('./fonts', import.meta.url));
+/** Bundled typeface: Fusion Pixel 12px proportional, Simplified Chinese (OFL 1.1). */
+const FONT_FILE = 'fusion-pixel-12px-proportional-zh_hans.woff2';
+/** Family name the bundled face is declared under. */
+const FONT_FAMILY = 'DSH Pixel';
 
 /** Media types served by the route. */
 const MEDIA_TYPES = {
@@ -41,6 +47,14 @@ const MEDIA_TYPES = {
   '.gif': 'image/gif',
   '.avif': 'image/avif',
   '.svg': 'image/svg+xml',
+};
+
+/** Font types served from the package's own `fonts/` directory. */
+const FONT_TYPES = {
+  '.woff2': 'font/woff2',
+  '.woff': 'font/woff',
+  '.ttf': 'font/ttf',
+  '.otf': 'font/otf',
 };
 
 /** Pixel faces tried in order; anything missing is skipped by the font matcher. */
@@ -104,6 +118,8 @@ const DEFAULTS = {
   scrimLight: 0.88,
   /** Pixel typeface for the whole GUI. */
   font: true,
+  /** Prefer the bundled Fusion Pixel face before anything the system has. */
+  bundledFont: true,
   /** Extra families tried before the built-in stack. */
   families: [],
   /** `{ provider?, model?, image, scrimDark?, scrimLight? }`, last match winning. */
@@ -318,7 +334,8 @@ function normalize(raw) {
   const families = Array.isArray(config.families)
     ? config.families.map((entry) => String(entry).trim()).filter((entry) => entry !== '').map((entry) => (/^"|^'/.test(entry) ? entry : `"${entry.replaceAll('"', '')}"`))
     : [];
-  const stack = [...families, ...PIXEL_FAMILIES];
+  const bundledFont = config.bundledFont !== false && existsSync(resolvePath(FONTS, FONT_FILE));
+  const stack = [...families, ...(bundledFont ? [`"${FONT_FAMILY}"`] : []), ...PIXEL_FAMILIES];
   return {
     enabled: config.enabled !== false,
     dir: expandDir(config.dir),
@@ -327,6 +344,7 @@ function normalize(raw) {
     scrimDark,
     scrimLight,
     font: config.font !== false,
+    bundledFont,
     stack: [...new Set(stack)].join(', '),
     rules,
   };
@@ -396,6 +414,12 @@ export function buildStyle(raw, prefs = {}) {
   const options = normalize(raw);
   if (!options.enabled) return '';
   const lines = ['/* gijinka theme: typeface, veil, per-model backdrop */'];
+  if (options.font && options.bundledFont) {
+    lines.push(
+      `@font-face{font-family:"${FONT_FAMILY}";font-style:normal;font-weight:400;font-display:swap;`
+        + `src:url("${ROUTE}/fonts/${FONT_FILE}") format("woff2");}`,
+    );
+  }
   if (options.font) {
     lines.push(`body{--dsw-font-family:${options.stack} !important;}`);
     lines.push(`body{--ds-font-family-code:${options.stack} !important;}`);
@@ -487,6 +511,19 @@ async function serve(options, request, response) {
     response.end();
     return;
   }
+  // The bundled face lives in the package, not in the user's picture directory.
+  if (name.startsWith('fonts/')) {
+    const suffix = name.slice('fonts/'.length);
+    const file = resolvePath(FONTS, suffix);
+    const fontType = FONT_TYPES[extname(file).toLowerCase()];
+    if (fontType === undefined || !isSafeName(suffix) || !file.startsWith(`${FONTS}${sep}`)) {
+      response.writeHead(404);
+      response.end();
+      return;
+    }
+    await sendFile(request, response, file, fontType, 'public, max-age=86400');
+    return;
+  }
   const type = MEDIA_TYPES[extname(name).toLowerCase()];
   const target = resolvePath(dir, name);
   if (type === undefined || !isSafeName(name) || !(target === dir || target.startsWith(`${dir}${sep}`))) {
@@ -494,8 +531,20 @@ async function serve(options, request, response) {
     response.end();
     return;
   }
+  await sendFile(request, response, target, type, 'public, max-age=3600');
+}
+
+/**
+ * Stream one file with its media type.
+ * @param request - incoming request (GET or HEAD).
+ * @param response - outgoing response.
+ * @param file - absolute path to serve.
+ * @param type - Content-Type value.
+ * @param cache - Cache-Control value.
+ */
+async function sendFile(request, response, file, type, cache) {
   try {
-    const info = await stat(target);
+    const info = await stat(file);
     if (!info.isFile()) {
       response.writeHead(404);
       response.end();
@@ -504,14 +553,14 @@ async function serve(options, request, response) {
     response.writeHead(200, {
       'Content-Type': type,
       'Content-Length': String(info.size),
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': cache,
       'Last-Modified': info.mtime.toUTCString(),
     });
     if (request.method === 'HEAD') {
       response.end();
       return;
     }
-    createReadStream(target).on('error', () => response.destroy()).pipe(response);
+    createReadStream(file).on('error', () => response.destroy()).pipe(response);
   } catch {
     response.writeHead(404);
     response.end();
